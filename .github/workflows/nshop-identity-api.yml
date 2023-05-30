@@ -1,16 +1,12 @@
 name: NShop Identity API
 
 on:
+  workflow_dispatch:
   push:
     branches:
-      - '*'
+      - '**'
     paths:
-      - "src/NShop.Identity/**"
-  pull_request:
-    branches:
-      - '*'
-    paths:
-      - "src/NShop.Identity/**"
+      - src/NShop.Identity/**
 
 jobs:
   build-and-test:
