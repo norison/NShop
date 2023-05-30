@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NShop.Identity.Api", "NShop.Identity.Api\NShop.Identity.Api.csproj", "{1ED426E3-3F60-414F-8288-FF7DBF3118CA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NShop.Identity.Persistence", "NShop.Identity.Persistence\NShop.Identity.Persistence.csproj", "{9704F5F7-968A-42D4-9AFC-72BF6EEA8193}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{1ED426E3-3F60-414F-8288-FF7DBF3118CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1ED426E3-3F60-414F-8288-FF7DBF3118CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1ED426E3-3F60-414F-8288-FF7DBF3118CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9704F5F7-968A-42D4-9AFC-72BF6EEA8193}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9704F5F7-968A-42D4-9AFC-72BF6EEA8193}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9704F5F7-968A-42D4-9AFC-72BF6EEA8193}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9704F5F7-968A-42D4-9AFC-72BF6EEA8193}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
