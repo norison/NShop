@@ -41,14 +41,8 @@ jobs:
         change_path: src/NShop.Common/NShop.Common.Application/**
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Set prerelease tag
-      if: github.ref != 'refs/heads/main'
-      run: echo "PRERELEASE_TAG=-${{ steps.version.outputs.prerelease }}" >> $GITHUB_ENV
-    - name: Set prerelease tag (main)
-      if: github.ref == 'refs/heads/main'
-      run: echo "PRERELEASE_TAG=" >> $GITHUB_ENV
     - name: Pack
-      run: dotnet pack --no-restore --no-build --configuration Release --output ./artifacts /p:PackageVersion=${{ steps.version.outputs.version }} ${{ env.PROJECT_PATH }}
+      run: dotnet pack --configuration Release --output ./artifacts -p:PackageVersion=${{ steps.version.outputs.version }} ${{ env.PROJECT_PATH }}
       env:
         PROJECT_PATH: ${{ env.PROJECT_PATH }}
     - name: Push
