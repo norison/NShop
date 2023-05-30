@@ -13,6 +13,8 @@ env:
   PROJECT_PATH: src/NShop.Common/NShop.Common.Application/NShop.Common.Application.csproj
   TEST_PROJECT_PATH: src/NShop.Common/Tests/NShop.Common.Application.Tests/NShop.Common.Application.Tests.csproj
   NUGET_API_KEY: ${{ secrets.NUGET_TOKEN }}
+  PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}/output
+  NUGET_SOURCE_URL: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
 
 jobs:
   build-and-test:
@@ -31,17 +33,18 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore ${{ env.PROJECT_PATH }}
     - name: Build
-      run: dotnet build --no-restore ${{ env.PROJECT_PATH }}
+      run: dotnet build ${{ env.PROJECT_PATH }} --no-restore
     - name: Test
       run: dotnet test ${{ env.TEST_PROJECT_PATH }}
-    - name: Calculate version
+    - name: Get version
       id: version
       uses: paulhatch/semantic-version@v5.0.2
       with:
         change_path: src/NShop.Common/NShop.Common.Application/**
+        version_format: "${major}.${minor}.${patch}-prerelease${increment}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Pack
-      run: dotnet pack --configuration Release --output ./artifacts -p:PackageVersion=${{ steps.version.outputs.version }} ${{ env.PROJECT_PATH }}
+      run: dotnet pack ${{ env.PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} -p:PackageVersion=${{ steps.version.outputs.version }}
     - name: Push
-      run: dotnet nuget push ./artifacts/*.nupkg --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --api-key ${{ env.NUGET_API_KEY }}
+      run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg --source ${{ env.NUGET_SOURCE_URL }} --api-key ${{ env.NUGET_API_KEY }}
