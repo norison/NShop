@@ -12,6 +12,7 @@ on:
 env:
   PROJECT_PATH: src/NShop.Common/NShop.Common.Application/NShop.Common.Application.csproj
   TEST_PROJECT_PATH: src/NShop.Common/Tests/NShop.Common.Application.Tests/NShop.Common.Application.Tests.csproj
+  NUGET_API_KEY: ${{ secrets.GITHUB_NUGET_API_KEY }}
 
 jobs:
   build-and-test:
@@ -21,6 +22,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
@@ -31,3 +34,24 @@ jobs:
       run: dotnet build --no-restore ${{ env.PROJECT_PATH }}
     - name: Test
       run: dotnet test ${{ env.TEST_PROJECT_PATH }}
+    - name: Calculate version
+      id: version
+      uses: paulhatch/semantic-version@v5.0.2
+      with:
+        tag-prefix: 'v'
+        prerelease-prefix: 'alpha.'
+        increment-on: 'merge'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Set prerelease tag
+      if: github.ref != 'refs/heads/main'
+      run: echo "PRERELEASE_TAG=-${{ steps.version.outputs.prerelease }}" >> $GITHUB_ENV
+    - name: Set prerelease tag (main)
+      if: github.ref == 'refs/heads/main'
+      run: echo "PRERELEASE_TAG=" >> $GITHUB_ENV
+    - name: Pack
+      run: dotnet pack --no-restore --no-build --configuration Release --output ./artifacts /p:PackageVersion=${{ steps.version.outputs.semantic-version }}${{ env.PRERELEASE_TAG }}
+      env:
+        PROJECT_PATH: ${{ env.PROJECT_PATH }}
+    - name: Push
+      run: dotnet nuget push ./artifacts/*.nupkg --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --api-key ${{ env.NUGET_API_KEY }}
