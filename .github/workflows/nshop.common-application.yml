@@ -12,7 +12,7 @@ on:
 env:
   PROJECT_PATH: src/NShop.Common/NShop.Common.Application/NShop.Common.Application.csproj
   TEST_PROJECT_PATH: src/NShop.Common/Tests/NShop.Common.Application.Tests/NShop.Common.Application.Tests.csproj
-  NUGET_API_KEY: ${{ secrets.GITHUB_NUGET_API_KEY }}
+  NUGET_API_KEY: ${{ secrets.NUGET_TOKEN }}
 
 jobs:
   build-and-test:
@@ -38,9 +38,7 @@ jobs:
       id: version
       uses: paulhatch/semantic-version@v5.0.2
       with:
-        tag-prefix: 'v'
-        prerelease-prefix: 'alpha.'
-        increment-on: 'merge'
+        change_path: src/NShop.Common/NShop.Common.Application/**
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Set prerelease tag
