@@ -50,7 +50,7 @@ jobs:
       if: github.ref == 'refs/heads/main'
       run: echo "PRERELEASE_TAG=" >> $GITHUB_ENV
     - name: Pack
-      run: dotnet pack --no-restore --no-build --configuration Release --output ./artifacts /p:PackageVersion=${{ steps.version.outputs.semantic-version }}${{ env.PRERELEASE_TAG }}
+      run: dotnet pack --no-restore --no-build --configuration Release --output ./artifacts /p:PackageVersion=${{ steps.version.outputs.semantic-version }}${{ env.PRERELEASE_TAG }} ${{ env.PROJECT_PATH }}
       env:
         PROJECT_PATH: ${{ env.PROJECT_PATH }}
     - name: Push
