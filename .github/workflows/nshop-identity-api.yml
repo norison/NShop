@@ -2,24 +2,35 @@ name: NShop Identity API
 
 on:
   push:
-    branches: [ "*" ]
+    branches:
+      - '*'
+    paths:
+      - "src/NShop.Identity/**"
   pull_request:
-    branches: [ "*" ]
+    branches:
+      - '*'
+    paths:
+      - "src/NShop.Identity/**"
 
 jobs:
-  build:
+  build-and-test:
 
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: src/NShop.Identity
+
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v3
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 7.0.x
     - name: Restore dependencies
-      run: dotnet restore src/NShop.Identity
+      run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore src/NShop.Identity
+      run: dotnet build --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal src/NShop.Identity
+      run: dotnet test --no-build --verbosity normal
