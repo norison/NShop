@@ -39,4 +39,5 @@ jobs:
     - name : Run tests
       run: dotnet test ${{ env.TEST_PROJECT_PATH }} --no-restore --no-build --verbosity normal
     - name: Push to GitHub Packages
+      if: github.ref == 'refs/heads/main'
       run: dotnet nuget push ${{ env.PROJECT_BUILD_OUTPUT_DIRECTORY }}/*.nupkg --source ${{ env.NUGET_SOURCE_URL }} --api-key ${{ env.NUGET_API_KEY }} --skip-duplicate
