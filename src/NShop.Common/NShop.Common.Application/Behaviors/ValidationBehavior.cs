@@ -6,7 +6,6 @@ public class ValidationBehavior<TMessage, TResponse> : IPipelineBehavior<TMessag
 {
     public ValueTask<TResponse> Handle(TMessage message, CancellationToken cancellationToken, MessageHandlerDelegate<TMessage, TResponse> next)
     {
-        // some changes
         throw new NotImplementedException();
     }
 }
