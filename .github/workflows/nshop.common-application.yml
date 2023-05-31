@@ -24,8 +24,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
@@ -36,15 +34,32 @@ jobs:
       run: dotnet build ${{ env.PROJECT_PATH }} --no-restore
     - name: Test
       run: dotnet test ${{ env.TEST_PROJECT_PATH }}
-    - name: Get version
-      id: version
-      uses: paulhatch/semantic-version@v5.0.2
-      with:
-        change_path: src/NShop.Common/NShop.Common.Application/**
-        version_format: "${major}.${minor}.${patch}-prerelease${increment}"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Pack
-      run: dotnet pack ${{ env.PROJECT_PATH }} --configuration Release --include-symbols --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} -p:PackageVersion=${{ steps.version.outputs.version }}
-    - name: Push
-      run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg --source ${{ env.NUGET_SOURCE_URL }} --api-key ${{ env.NUGET_API_KEY }}
+
+  pack-and-push:
+      if: github.ref == 'refs/heads/main'
+      runs-on: ubuntu-latest
+  
+      steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 7.0.x
+      - name: Get version
+        id: version
+        uses: paulhatch/semantic-version@v5.0.2
+        with:
+          tag_prefix: "v"
+          major_pattern: "BREAKING CHANGE:"
+          minor_pattern: "feat:"
+          change_path: src/NShop.Common/NShop.Common.Application/**
+          version_format: "${major}.${minor}.${patch}-prerelease${increment}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Pack
+        run: dotnet pack ${{ env.PROJECT_PATH }} --configuration Release --include-symbols --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} -p:PackageVersion=${{ steps.version.outputs.version }}
+      - name: Push
+        run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg --source ${{ env.NUGET_SOURCE_URL }} --api-key ${{ env.NUGET_API_KEY }}
